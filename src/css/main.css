@@ -1,0 +1,72 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html{
+    font-family: sans-serif;
+}
+
+.wrapper{
+    margin: auto;
+    width: 1000px;
+    height: 100vh;
+    padding: 10px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr 1fr 1fr;
+    overflow: hidden;
+}
+
+.column{
+    height: 100%;
+    border-radius: 0px 0px 8px 8px;
+    border: 1px solid black;
+}
+
+.column--todo{
+    border-top: 5px solid rgb(124, 43, 43);
+}
+.column--doing{
+    border-top: 5px solid rgb(128, 134, 39);
+}
+.column--done{
+    border-top: 5px solid rgb(2, 153, 83);
+}
+
+.column__header{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 20px;
+    position: relative;
+}
+.modalAddTask{
+    background-color: rebeccapurple;
+    padding: 5px;
+    position: absolute;
+    top: 60px;
+    left: 20px;
+}
+
+.tasks{
+    padding: 10px;
+    display: flex;
+    gap: 16px;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+    overflow-y: scroll;
+}
+
+.taskCard{
+    padding: 16px;
+    background-color: #ffffff;
+    border: 1px solid black;
+    cursor: pointer;
+}
+.taskCard:hover{
+    border:  2px solid rebeccapurple;
+}
+.taskCard--dragOver:hover{
+    background-color: blueviolet;
+}
