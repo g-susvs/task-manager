@@ -5,8 +5,10 @@ import { Task, TaskStatus } from "../interfaces";
 export interface TasksState {
     taskList: Task[];
     addNewTask: (title: string, status: TaskStatus) => void;
-    changeTaskStatus: (status: TaskStatus) => void;
+    updateTask: (id: string, updatedTask: { title: string, desc: string }) => void;
+    changeTaskColor: (id: string, color: string) => void;
     updateListState: (list: Task[]) => void;
+    deleteTask: (id: string) => void;
 }
 
 export interface AppContextProps {

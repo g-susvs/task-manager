@@ -1,4 +1,4 @@
-import { DragEvent, useContext, useState } from "react";
+import { DragEvent, useContext } from "react";
 
 import { Task, TaskStatus } from "./interfaces";
 import { AppContext } from "./context/AppContext";
@@ -6,7 +6,20 @@ import { TaskCard } from "./components/TaskCard";
 import { Column } from "./components/Column";
 
 
-const columsId: TaskStatus[] = ['todo', 'doing', 'done']
+const columns: { id: TaskStatus, title: string }[] = [
+    {
+        id: 'todo',
+        title: 'Pendientes 📝',
+    },
+    {
+        id: 'doing',
+        title: 'En proceso 🛠️',
+    },
+    {
+        id: 'done',
+        title: 'Hecho ✅',
+    },
+]
 
 export const App = () => {
 
@@ -14,19 +27,14 @@ export const App = () => {
 
     const { taskList, updateListState } = tasksState
 
-    const [activeDragOver, setActiveDragOver] = useState(false)
-    const [taskSelected, setTaskSelected] = useState<string | null>(null)
 
 
     const handleDrangStart = (event: DragEvent<HTMLDivElement>, task: Task) => {
         event.dataTransfer.setData('taskId', task.id)
-        setTaskSelected(task.id)
     }
 
     const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
         event.preventDefault()
-        setActiveDragOver(true)
-
     }
 
     const handleDrop = (event: DragEvent<HTMLDivElement>, status: TaskStatus) => {
@@ -41,47 +49,45 @@ export const App = () => {
 
             return task
         })
-        setActiveDragOver(false)
 
         updateListState(newState)
-
     }
 
 
     return (
-        <main className="wrapper">
-            {
-                columsId.map(columId => {
-                    return (
-                        <Column
-                            key={columId}
-                            id={columId}
-                            titleColumn={columId}
-                            handleDragOver={handleDragOver}
-                            handleDrop={handleDrop}
-                        >
-                            <>
-                                {
-                                    taskList.map(task => {
-                                        if (task.status === columId) {
-                                            return (
-                                                <TaskCard
-                                                    key={task.id}
-                                                    task={task}
-                                                    activeDragOver={activeDragOver}
-                                                    taskSelected={taskSelected}
-                                                    handleDrangStart={handleDrangStart}
+        <div className="h-[100vh] font-sans p-4 bg-neutral-950">
+            <main className="max-w-[980px] h-full m-auto grid grid-cols-[repeat(3,_minmax(300px,_1fr))] gap-4">
+                {
+                    columns.map(column => {
+                        return (
+                            <Column
+                                key={column.id}
+                                id={column.id}
+                                titleColumn={column.title}
+                                handleDragOver={handleDragOver}
+                                handleDrop={handleDrop}
+                            >
+                                <>
+                                    {
+                                        taskList.map(task => {
+                                            if (task.status === column.id) {
+                                                return (
+                                                    <TaskCard
+                                                        key={task.id}
+                                                        task={task}
+                                                        handleDrangStart={handleDrangStart}
 
-                                                />
-                                            )
-                                        }
-                                    })
-                                }
-                            </>
-                        </Column>
-                    )
-                })
-            }
-        </main>
+                                                    />
+                                                )
+                                            }
+                                        })
+                                    }
+                                </>
+                            </Column>
+                        )
+                    })
+                }
+            </main>
+        </div>
     )
 }

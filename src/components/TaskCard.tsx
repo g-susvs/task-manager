@@ -1,27 +1,125 @@
-import { DragEvent } from "react";
+import { DragEvent, FormEvent, useContext, useRef, useState } from "react";
+import { MdEdit, MdDelete } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
 
 import { Task } from "../interfaces";
+import { useForm } from "../hooks/useForm";
+import { AppContext } from "../context/AppContext";
+import { useOnClickOutside } from "../hooks/useOnClickOutside";
 
 interface Props {
     task: Task;
-    activeDragOver: boolean;
-    taskSelected: string | null;
     handleDrangStart: (event: DragEvent<HTMLDivElement>, task: Task) => void
 }
 
-export const TaskCard = ({ task, activeDragOver, taskSelected, handleDrangStart }: Props) => {
+export const TaskCard = ({ task, handleDrangStart }: Props) => {
+
+    const { tasksState } = useContext(AppContext)
+    const { updateTask, changeTaskColor, deleteTask } = tasksState
+
+    const [editTask, setEditTask] = useState(false)
+    const [ActiveDeleteTask, setActiveDeleteTask] = useState(false)
+
+    const { title, desc, onInputChange, onTextAreaChange } = useForm({
+        title: task.title,
+        desc: task.desc
+    })
+
+    //* card edit
+    const cardRef = useRef(null)
+    useOnClickOutside(cardRef, () => {
+        if (!editTask) return
+        if (!title && !desc) return
+        if (title.trim().length < 2) return
+        updateTask(task.id, { title, desc: desc! })
+        setEditTask(false)
+    })
+
+    //* modal delete
+    const modalRef = useRef(null)
+    useOnClickOutside(modalRef, () => setActiveDeleteTask(false))
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+
+        if (!title && !desc) return
+        updateTask(task.id, { title, desc: desc?.trim() || '' })
+        setEditTask(false)
+    }
+
+    const selectColor = (color: string) => {
+        changeTaskColor(task.id, color)
+
+    }
 
     return (
-        <div
+        <form onSubmit={handleSubmit} >
+            <div
+                ref={cardRef}
+                className={`taskCard absolute ${task.color}`}
+                draggable
+                onDragStart={(event) => handleDrangStart(event, task)}
+            >
 
-            className={`taskCard ${(activeDragOver && task.id === taskSelected) ? 'taskCard--dragOver' : ''}`}
-            draggable
-            onDragStart={(event) => handleDrangStart(event, task)}
-        >
-            <h3 className="taskCard_title">{task.title}</h3>
-            <p className="taskCard_desc">
-                {task.desc}
-            </p>
-        </div>
+                <div className="flex justify-between items-start">
+                    {
+                        editTask
+                            ? <input className="taskCard__title--edit" type="" value={title} name="title" onChange={onInputChange} />
+                            : <span className="text-base w-[80%]">{title}</span>
+                    }
+                    {
+                        editTask
+                            ?
+                            <button type="button" className="btn--task" aria-label="Editar tarea" onClick={() => setEditTask(!editTask)}>
+                                <IoMdClose />
+                            </button>
+                            : <button type="button" className="btn--task" aria-label="Editar tarea" onClick={() => setEditTask(!editTask)}>
+                                <MdEdit />
+                            </button>
+                    }
+                    <button type="button" className="btn--task" aria-label="Eliminar tarea" onClick={() => setActiveDeleteTask(true)}>
+                        <MdDelete />
+                    </button>
+                    {
+                        ActiveDeleteTask &&
+                        <div ref={modalRef} className="modalDelete">
+                            <span className="modalDelete__quest">Estas seguro?</span>
+                            <div>
+                                <button type="button" className="btn ml-8 modalDelete__btn--confirm" onClick={() => deleteTask(task.id)} > Sí</button>
+                                <button type="button" className="btn ml-4 modalDelete__btn--cancel" onClick={() => setActiveDeleteTask(false)}>No</button>
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+                <div className="taskCard__body">
+                    {
+                        editTask
+                            ? <textarea className="taskCard__desc--edit custom--scroll" value={desc} name="desc" onChange={onTextAreaChange} rows={2} />
+                            : <p className="text-sm text-zinc-300">
+                                {task.desc}
+                            </p>
+                    }
+                </div>
+                {
+                    editTask &&
+                    <div className="flex gap-4">
+                        <button className="btnColor btnColor--red" type="button" onClick={() => selectColor('taskCard--red')}></button>
+                        <button className="btnColor btnColor--green" type="button" onClick={() => selectColor('taskCard--green')}></button>
+                        <button className="btnColor btnColor--yellow" type="button" onClick={() => selectColor('taskCard--yellow')}></button>
+                        <button className="btnColor btnColor--blue" type="button" onClick={() => selectColor('taskCard--blue')}></button>
+                        <button className="btnColor btnColor--purple" type="button" onClick={() => selectColor('taskCard--purple')}></button>
+                        <button className="btnColor btnColor--pink" type="button" onClick={() => selectColor('taskCard--pink')}></button>
+                    </div>
+                }
+                <div className="flex justify-between items-center">
+                    <span className="text-zinc-400">{new Date(task.date).toLocaleString()}</span>
+                    {
+                        editTask && <button className="btn btn--save">Guardar</button>
+                    }
+                </div>
+            </div>
+        </form >
     )
 }
