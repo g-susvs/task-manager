@@ -55,7 +55,7 @@ export const App = () => {
 
 
     return (
-        <div className="h-[100vh] font-sans p-4 bg-neutral-950">
+        <div className="h-[100vh] font-sans p-4 bg-neutral-950 max-md:overflow-x-scroll">
             <main className="max-w-[980px] h-full m-auto grid grid-cols-[repeat(3,_minmax(300px,_1fr))] gap-4">
                 {
                     columns.map(column => {
