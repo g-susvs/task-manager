@@ -44,7 +44,7 @@ body{
 }
 
 .taskCard{
-    @apply rounded-lg bg-zinc-950 p-6 flex flex-col gap-2 border-l-8 border-zinc-950 relative z-10 cursor-move;
+    @apply rounded-lg bg-zinc-950 p-6 flex flex-col gap-2 border-l-8 border-zinc-950 relative z-10 cursor-grab;
 }
 
 .taskCard__title--edit{

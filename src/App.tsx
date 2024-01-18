@@ -9,7 +9,7 @@ import { Column } from "./components/Column";
 const columns: { id: TaskStatus, title: string }[] = [
     {
         id: 'todo',
-        title: 'Pendientes 📝',
+        title: 'Pendiente 📝',
     },
     {
         id: 'doing',
@@ -17,7 +17,7 @@ const columns: { id: TaskStatus, title: string }[] = [
     },
     {
         id: 'done',
-        title: 'Hecho ✅',
+        title: 'Completado ✅',
     },
 ]
 

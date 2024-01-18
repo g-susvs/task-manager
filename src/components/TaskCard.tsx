@@ -117,7 +117,7 @@ export const TaskCard = ({ task, handleDrangStart }: Props) => {
                             <option value="status">Estado</option>
                             <option value="todo">Pendiente</option>
                             <option value="doing">En proceso</option>
-                            <option value="done">Hecho</option>
+                            <option value="done">Completado</option>
                         </select>
                     </div>
                 }
