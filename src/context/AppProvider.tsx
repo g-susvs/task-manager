@@ -59,7 +59,7 @@ export const AppProvider = ({ children }: Props) => {
 
     }
 
-    const updateTask = (id: string, updatedTask: { title: string, desc: string }) => {
+    const updateTask = (id: string, updatedTask: { title: string, desc: string, status: TaskStatus }) => {
 
         const newArr = taskList.map(task => {
             if (task.id === id) {
@@ -67,6 +67,7 @@ export const AppProvider = ({ children }: Props) => {
                     ...task,
                     title: updatedTask.title,
                     desc: updatedTask.desc,
+                    status: updatedTask.status,
                     date: new Date().getTime()
                 }
             }

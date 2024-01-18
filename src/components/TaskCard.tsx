@@ -1,4 +1,5 @@
 import { DragEvent, FormEvent, useContext, useRef, useState } from "react";
+
 import { MdEdit, MdDelete } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 
@@ -20,19 +21,25 @@ export const TaskCard = ({ task, handleDrangStart }: Props) => {
     const [editTask, setEditTask] = useState(false)
     const [ActiveDeleteTask, setActiveDeleteTask] = useState(false)
 
-    const { title, desc, onInputChange, onTextAreaChange } = useForm({
+    const { title, desc, status, onInputChange, onTextAreaChange, onSelectChange } = useForm({
         title: task.title,
-        desc: task.desc
+        desc: task.desc,
+        status: task.status
     })
+
+    const handleUpdateTask = () => {
+        if (!title && !desc) return
+        if (status !== 'todo' && status !== 'doing' && status !== 'done') return
+        if (title.trim().length < 2) return
+        updateTask(task.id, { title, desc: desc!, status })
+        setEditTask(false)
+    }
 
     //* card edit
     const cardRef = useRef(null)
     useOnClickOutside(cardRef, () => {
         if (!editTask) return
-        if (!title && !desc) return
-        if (title.trim().length < 2) return
-        updateTask(task.id, { title, desc: desc! })
-        setEditTask(false)
+        handleUpdateTask()
     })
 
     //* modal delete
@@ -41,15 +48,11 @@ export const TaskCard = ({ task, handleDrangStart }: Props) => {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-
-        if (!title && !desc) return
-        updateTask(task.id, { title, desc: desc?.trim() || '' })
-        setEditTask(false)
+        handleUpdateTask()
     }
 
     const selectColor = (color: string) => {
         changeTaskColor(task.id, color)
-
     }
 
     return (
@@ -102,6 +105,22 @@ export const TaskCard = ({ task, handleDrangStart }: Props) => {
                             </p>
                     }
                 </div>
+                {
+                    editTask &&
+                    <div className="py-2">
+                        <select
+                            name="status"
+                            className="taskCard__select"
+                            defaultValue={task.status}
+                            onChange={onSelectChange}
+                        >
+                            <option value="status">Estado</option>
+                            <option value="todo">Pendiente</option>
+                            <option value="doing">En proceso</option>
+                            <option value="done">Hecho</option>
+                        </select>
+                    </div>
+                }
                 {
                     editTask &&
                     <div className="flex gap-4">
