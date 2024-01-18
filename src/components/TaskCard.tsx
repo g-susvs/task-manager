@@ -1,5 +1,4 @@
-import { DragEvent, FormEvent, useContext, useRef, useState } from "react";
-
+import { FormEvent, useContext, useRef, useState } from "react";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 
@@ -7,18 +6,22 @@ import { Task } from "../interfaces";
 import { useForm } from "../hooks/useForm";
 import { AppContext } from "../context/AppContext";
 import { useOnClickOutside } from "../hooks/useOnClickOutside";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Props {
     task: Task;
-    handleDrangStart: (event: DragEvent<HTMLDivElement>, task: Task) => void
 }
 
-export const TaskCard = ({ task, handleDrangStart }: Props) => {
+export const TaskCard = ({ task }: Props) => {
+
+
 
     const { tasksState } = useContext(AppContext)
     const { updateTask, changeTaskColor, deleteTask } = tasksState
 
     const [editTask, setEditTask] = useState(false)
+
     const [ActiveDeleteTask, setActiveDeleteTask] = useState(false)
 
     const { title, desc, status, onInputChange, onTextAreaChange, onSelectChange } = useForm({
@@ -26,6 +29,28 @@ export const TaskCard = ({ task, handleDrangStart }: Props) => {
         desc: task.desc,
         status: task.status
     })
+
+
+    const {
+        setNodeRef,
+        attributes,
+        listeners,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({
+        id: task.id,
+        data: {
+            type: "Task",
+            task,
+        },
+    });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
 
     const handleUpdateTask = () => {
         if (!title && !desc) return
@@ -55,14 +80,30 @@ export const TaskCard = ({ task, handleDrangStart }: Props) => {
         changeTaskColor(task.id, color)
     }
 
+    if (isDragging) return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className="
+        opacity-30
+      bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl border-2 border-blue-500  cursor-grab relative
+      ">
+        </div>
+    )
+
     return (
-        <form onSubmit={handleSubmit} >
-            <div
-                ref={cardRef}
-                className={`taskCard absolute ${task.color}`}
-                draggable
-                onDragStart={(event) => handleDrangStart(event, task)}
+
+        <div
+            {...attributes}
+            {...listeners}
+            style={style}
+            ref={setNodeRef}
+            className={`taskCard absolute ${task.color}`}
+        >
+            <form
+                onSubmit={handleSubmit}
             >
+
 
                 <div className="flex justify-between items-start">
                     {
@@ -138,7 +179,7 @@ export const TaskCard = ({ task, handleDrangStart }: Props) => {
                         editTask && <button className="btn btn--save">Guardar</button>
                     }
                 </div>
-            </div>
-        </form >
+            </form >
+        </div>
     )
 }

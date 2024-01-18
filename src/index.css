@@ -19,7 +19,7 @@ body{
 }
 
 .modal{
-    @apply absolute top-14 left-2 w-[400px] bg-zinc-900 rounded-md p-3 z-20;
+    @apply absolute top-14 left-2 w-[400px] bg-zinc-900 rounded-md p-3 z-[999];
 }
 .modal__input{
     @apply block bg-zinc-900 w-full rounded-md border-0 py-1.5 px-2 text-zinc-100 shadow-sm ring-1 ring-inset ring-neutral-600 placeholder:text-neutral-50 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-0;
@@ -27,7 +27,7 @@ body{
 
 
 .column__tasksDrop{
-    @apply flex flex-col gap-2 mt-2 p-2 overflow-y-scroll;
+    @apply flex flex-grow flex-col gap-2 mt-2 p-2 overflow-y-scroll;
     height: calc(100vh - 110px);
 }
 
@@ -44,7 +44,10 @@ body{
 }
 
 .taskCard{
-    @apply rounded-lg bg-zinc-950 p-6 flex flex-col gap-2 border-l-8 border-zinc-950 relative z-10 cursor-move;
+    @apply rounded-lg bg-zinc-950 p-6 flex flex-col gap-2 border-l-8 border-zinc-950 relative cursor-grab;
+}
+.taskCard--dragging{
+    @apply h-[100px] rounded-lg bg-zinc-950 p-6 flex flex-col gap-2 border-2 border-dashed border-indigo-800;
 }
 
 .taskCard__title--edit{
@@ -60,7 +63,7 @@ body{
     @apply bg-zinc-900 p-2 rounded-md focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-0;
 }
 .modalDelete{
-    @apply flex justify-between items-center absolute top-14 right-1 bg-zinc-900 px-2.5 py-2.5 rounded-md;
+    @apply flex justify-between items-center absolute top-14 right-1 bg-zinc-900 px-2.5 py-2.5 rounded-md z-50;
 }
 .modalDelete__quest{
     @apply text-lg;
