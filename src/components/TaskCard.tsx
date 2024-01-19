@@ -99,7 +99,7 @@ export const TaskCard = ({ task }: Props) => {
                 >
                     <div className="flex justify-between items-start">
 
-                        <input className="taskCard__title--edit" type="" value={title} name="title" onChange={onInputChange} />
+                        <input className="taskCard__title--edit" type="text" value={title} name="title" onChange={onInputChange} />
                         <button type="button" className="btn--task" aria-label="Cerrar edición" onClick={() => setEditMode(false)}>
                             <IoMdClose className="taskCard__iconButton" />
                         </button>
