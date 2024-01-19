@@ -9,6 +9,7 @@ export interface TasksState {
     changeTaskColor: (id: string, color: string) => void;
     updateListState: (list: Task[]) => void;
     deleteTask: (id: string) => void;
+    orderList: (value: React.SetStateAction<Task[]>) => void;
 }
 
 export interface AppContextProps {

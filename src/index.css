@@ -9,17 +9,17 @@ body{
    @apply rounded-md px-2.5 py-1.5 font-semibold leading-6;
 }
 .btn--header{
-    @apply bg-indigo-900 text-indigo-100 shadow-sm hover:bg-indigo-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+    @apply bg-indigo-900 text-indigo-100 shadow-sm hover:bg-indigo-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 z-40;
 }
 .btn--addTask{
     @apply w-[200px] bg-indigo-900 text-white shadow-sm hover:bg-indigo-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
 }
 .btn--task{
-    @apply hover:text-indigo-400 p-[4px] rounded-full hover:bg-zinc-900 ml-2;
+    @apply hover:text-indigo-400 p-[6px] rounded-full hover:bg-zinc-900 ml-2;
 }
 
 .modal{
-    @apply absolute top-14 left-2 w-[400px] bg-zinc-900 rounded-md p-3 z-20;
+    @apply absolute top-14 left-2 w-[400px] bg-zinc-900 rounded-md p-3 z-[999];
 }
 .modal__input{
     @apply block bg-zinc-900 w-full rounded-md border-0 py-1.5 px-2 text-zinc-100 shadow-sm ring-1 ring-inset ring-neutral-600 placeholder:text-neutral-50 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-0;
@@ -27,7 +27,7 @@ body{
 
 
 .column__tasksDrop{
-    @apply flex flex-col gap-2 mt-2 p-2 overflow-y-scroll;
+    @apply flex flex-grow flex-col gap-4 mt-2 p-2 overflow-y-scroll;
     height: calc(100vh - 110px);
 }
 
@@ -44,14 +44,22 @@ body{
 }
 
 .taskCard{
-    @apply rounded-lg bg-zinc-950 p-6 flex flex-col gap-2 border-l-8 border-zinc-950 relative z-10 cursor-grab;
+    @apply rounded-lg text-zinc-50  bg-zinc-950 p-6 flex flex-col gap-2 border-l-8 border-zinc-950 relative hover:border-[1px];
 }
-
+.taskCard--dragging{
+    @apply h-[100px] rounded-lg bg-zinc-950 p-6 flex flex-col gap-2 border-2 border-dashed border-indigo-800;
+}
+.taskCard__iconButton{
+    @apply w-5 h-5;
+}
+.taskCard__title{
+    @apply text-base w-[70%] overflow-hidden overflow-ellipsis whitespace-nowrap break-words;
+}
 .taskCard__title--edit{
     @apply w-[80%] bg-transparent border-[1px] border-zinc-700 rounded-md p-2 focus:ring-2 focus:ring-inset focus:ring-indigo-600 outline-0;
 }
 .taskCard__body{
-    @apply text-zinc-300
+    @apply text-zinc-300 flex flex-col gap-2 py-2;
 }
 .taskCard__desc--edit{
     @apply w-full bg-transparent resize-none border-[1px] border-zinc-700 rounded-md p-2 focus:ring-2 focus:ring-inset focus:ring-indigo-600 outline-0;
@@ -60,7 +68,7 @@ body{
     @apply bg-zinc-900 p-2 rounded-md focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-0;
 }
 .modalDelete{
-    @apply flex justify-between items-center absolute top-14 right-1 bg-zinc-900 px-2.5 py-2.5 rounded-md;
+    @apply flex justify-between items-center absolute top-14 right-1 bg-zinc-900 px-2.5 py-2.5 rounded-md z-50;
 }
 .modalDelete__quest{
     @apply text-lg;
@@ -97,21 +105,24 @@ body{
     @apply bg-pink-500;
 }
 
+.taskCard--gray{
+    @apply border-l-8 border-zinc-700 hover:border-[1px] hover:border-l-8;
+}
 .taskCard--red{
-    @apply border-l-8 border-red-500;
+    @apply border-l-8 border-red-500 hover:border-[1px] hover:border-l-8;
 }
 .taskCard--green{
-    @apply border-l-8 border-green-500;
+    @apply border-l-8 border-green-500 hover:border-[1px] hover:border-l-8;
 }
 .taskCard--yellow{
-    @apply border-l-8 border-yellow-500;
+    @apply border-l-8 border-yellow-500 hover:border-[1px] hover:border-l-8;
 }
 .taskCard--blue{
-    @apply border-l-8 border-blue-500;
+    @apply border-l-8 border-blue-500 hover:border-[1px] hover:border-l-8;
 }
 .taskCard--purple{
-    @apply border-l-8 border-purple-500;
+    @apply border-l-8 border-purple-500 box-content hover:border-[1px] hover:border-l-8;
 }
 .taskCard--pink{
-    @apply border-l-8 border-pink-500;
+    @apply border-l-8 border-pink-500 hover:border-[1px] hover:border-l-8;
 }

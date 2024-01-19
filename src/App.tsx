@@ -1,9 +1,20 @@
-import { DragEvent, useContext } from "react";
+import { useContext, useState } from "react";
+import {
+    DndContext,
+    DragOverEvent,
+    DragOverlay,
+    DragStartEvent,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
 
 import { Task, TaskStatus } from "./interfaces";
 import { AppContext } from "./context/AppContext";
 import { TaskCard } from "./components/TaskCard";
 import { Column } from "./components/Column";
+import { createPortal } from "react-dom";
+import { arrayMove } from "@dnd-kit/sortable";
 
 
 const columns: { id: TaskStatus, title: string }[] = [
@@ -25,69 +36,99 @@ export const App = () => {
 
     const { tasksState } = useContext(AppContext)
 
-    const { taskList, updateListState } = tasksState
+    const { taskList, orderList } = tasksState
+
+    const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+    const pointerSensor = useSensor(PointerSensor, {
+        activationConstraint: {
+            distance: 10,
+        },
+    })
+    const sensors = useSensors(pointerSensor)
 
 
-
-    const handleDrangStart = (event: DragEvent<HTMLDivElement>, task: Task) => {
-        event.dataTransfer.setData('taskId', task.id)
+    const onDragStart = (event: DragStartEvent) => {
+        if (event.active.data.current?.type === "Task") {
+            setActiveTask(event.active.data.current.task);
+            return;
+        } else {
+            console.log(event)
+        }
     }
-
-    const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
-        event.preventDefault()
+    const onDragEnd = () => {
+        setActiveTask(null);
     }
+    const onDragOver = ({ active, over }: DragOverEvent) => {
 
-    const handleDrop = (event: DragEvent<HTMLDivElement>, status: TaskStatus) => {
-        const taskId = event.dataTransfer.getData('taskId')
-        const taskFind = taskList.find(task => task.id == taskId)
+        if (!over) return;
 
-        if (!taskFind) return
-        taskFind.status = status
+        if (over?.data.current && over?.data.current.type === 'Task') {
 
-        const newState = taskList.map(task => {
-            if (task.id == taskFind.id) return taskFind
+            const activeId = active.id;
+            const overId = over.id;
 
-            return task
-        })
+            if (activeId === overId) return;
 
-        updateListState(newState)
+            orderList(tasks => {
+
+                const activeIndex = tasks.findIndex((task) => task.id === active.id);
+                const overIndex = tasks.findIndex((task) => task.id === over.id);
+
+                tasks[activeIndex].status = tasks[overIndex].status
+                return arrayMove(tasks, activeIndex, overIndex);
+            })
+        }
+        if (over?.data.current && over?.data.current.type === 'Column') {
+            orderList(tasks => {
+                const status: TaskStatus = over?.data.current!.id
+
+                const activeIndex = tasks.findIndex((task) => task.id === active.id);
+
+                tasks[activeIndex].status = status
+                return arrayMove(tasks, activeIndex, activeIndex);
+            })
+        }
     }
-
 
     return (
-        <div className="h-[100vh] font-sans p-4 bg-neutral-950 max-md:overflow-x-scroll">
-            <main className="max-w-[980px] h-full m-auto grid grid-cols-[repeat(3,_minmax(300px,_1fr))] gap-4">
-                {
-                    columns.map(column => {
-                        return (
-                            <Column
-                                key={column.id}
-                                id={column.id}
-                                titleColumn={column.title}
-                                handleDragOver={handleDragOver}
-                                handleDrop={handleDrop}
-                            >
-                                <>
-                                    {
-                                        taskList.map(task => {
-                                            if (task.status === column.id) {
-                                                return (
-                                                    <TaskCard
-                                                        key={task.id}
-                                                        task={task}
-                                                        handleDrangStart={handleDrangStart}
+        <DndContext
+            sensors={sensors}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragOver={onDragOver}
+        >
+            <div className="h-[100vh] font-sans p-4 bg-neutral-950 max-lg:overflow-x-scroll">
+                <main className="max-w-[1200px] h-full m-auto grid grid-cols-[repeat(3,_minmax(320px,_1fr))] gap-4">
+                    {
+                        columns.map(column => {
+                            return (
+                                <Column
+                                    key={column.id}
+                                    id={column.id}
+                                    taskList={taskList.filter(task => task.status === column.id)}
+                                    titleColumn={column.title}
+                                />
+                            )
+                        })
+                    }
+                </main>
+            </div>
+            {
+                createPortal(
 
-                                                    />
-                                                )
-                                            }
-                                        })
-                                    }
-                                </>
-                            </Column>
-                        )
-                    })
-                }
-            </main>
-        </div>
+                    <DragOverlay>
+                        {
+                            activeTask && (
+                                <TaskCard
+                                    task={activeTask}
+                                />
+                            )}
+                    </DragOverlay>,
+                    document.body
+                )
+            }
+        </DndContext>
+
     )
 }

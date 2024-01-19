@@ -1,25 +1,46 @@
-import { DragEvent, FormEvent, useContext, useRef, useState } from "react";
+import { FormEvent, useContext, useMemo, useRef, useState } from "react";
 import { IoIosAdd } from "react-icons/io";
 
-import { AppContext } from "../context/AppContext";
-import { TaskStatus } from "../interfaces";
+import { Task, TaskStatus } from "../interfaces";
 import { useForm } from "../hooks/useForm";
 import { useOnClickOutside } from "../hooks/useOnClickOutside";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { TaskCard } from "./TaskCard";
+import { AppContext } from "../context/AppContext";
+import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
     id: TaskStatus;
+    taskList: Task[];
     titleColumn: string;
     customClass?: string;
-    children: JSX.Element;
-    handleDragOver: (event: DragEvent<HTMLDivElement>) => void;
-    handleDrop: (event: DragEvent<HTMLDivElement>, status: TaskStatus) => void;
-
 }
 
-export const Column = ({ children, id, customClass, titleColumn, handleDragOver, handleDrop }: Props) => {
+export const Column = ({ id, customClass, titleColumn, taskList }: Props) => {
 
     const { tasksState } = useContext(AppContext)
     const { addNewTask } = tasksState
+    const tasksIds = useMemo(() => {
+        return taskList.map((task) => task.id);
+    }, [taskList]);
+
+    const {
+        setNodeRef,
+        transition,
+        transform
+    } = useSortable({
+        id,
+        data: {
+            type: "Column",
+            id
+        },
+    })
+
+    const style = {
+        transition,
+        transform: CSS.Transform.toString(transform),
+    };
+
 
     const [activeInput, setActiveInput] = useState(false)
     const modalRef = useRef(null);
@@ -48,7 +69,10 @@ export const Column = ({ children, id, customClass, titleColumn, handleDragOver,
     }
 
     return (
-        <section className={"bg-zinc-900 text-white rounded-lg relative " + customClass}>
+        <section
+            ref={setNodeRef}
+            style={style}
+            className={"bg-zinc-900 text-white rounded-lg relative " + customClass}>
             <header className="flex justify-between p-3">
                 <span className="text-2xl font-bold">{titleColumn}</span>
                 <button
@@ -84,10 +108,15 @@ export const Column = ({ children, id, customClass, titleColumn, handleDragOver,
                 }
             </header>
 
-            <div className="column__tasksDrop custom--scroll" onDragOver={handleDragOver} onDrop={(event) => handleDrop(event, id)}>
-                {
-                    children
-                }
+            <div className="column__tasksDrop custom--scroll">
+                <SortableContext items={tasksIds}>
+                    {taskList.map((task) => (
+                        <TaskCard
+                            key={task.id}
+                            task={task}
+                        />
+                    ))}
+                </SortableContext>
             </div>
         </section>
     )

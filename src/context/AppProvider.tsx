@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { v4 as uuid } from 'uuid'
 
 import { Task, TaskStatus } from "../interfaces"
@@ -50,13 +50,12 @@ export const AppProvider = ({ children }: Props) => {
                 id: uuid(),
                 title: title,
                 status: status,
+                color: 'taskCard--gray',
                 date: new Date().getTime()
             },
             ...taskList
         ]
         setTaskList(newArr)
-        localStorage.setItem('task-list', JSON.stringify(newArr))
-
     }
 
     const updateTask = (id: string, updatedTask: { title: string, desc: string, status: TaskStatus }) => {
@@ -75,9 +74,6 @@ export const AppProvider = ({ children }: Props) => {
         })
 
         setTaskList(newArr)
-
-        localStorage.setItem('task-list', JSON.stringify(newArr))
-
     }
 
     const changeTaskColor = (id: string, color: string) => {
@@ -92,15 +88,11 @@ export const AppProvider = ({ children }: Props) => {
         })
 
         setTaskList(newArr)
-
-        localStorage.setItem('task-list', JSON.stringify(newArr))
     }
 
     const updateListState = (list: Task[]) => {
 
         setTaskList(list)
-        localStorage.setItem('task-list', JSON.stringify(list))
-
     }
 
     const deleteTask = (id: string) => {
@@ -118,8 +110,13 @@ export const AppProvider = ({ children }: Props) => {
         updateTask,
         changeTaskColor,
         updateListState,
-        deleteTask
+        deleteTask,
+        orderList: setTaskList
     }
+
+    useEffect(() => {
+        localStorage.setItem('task-list', JSON.stringify(taskList))
+    }, [taskList])
 
     return (
         <AppContext.Provider value={{ tasksState }}>
