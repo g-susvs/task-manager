@@ -1,11 +1,20 @@
 import { useContext, useState } from "react";
-import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import {
+    DndContext,
+    DragOverEvent,
+    DragOverlay,
+    DragStartEvent,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
 
 import { Task, TaskStatus } from "./interfaces";
 import { AppContext } from "./context/AppContext";
 import { TaskCard } from "./components/TaskCard";
 import { Column } from "./components/Column";
 import { createPortal } from "react-dom";
+import { arrayMove } from "@dnd-kit/sortable";
 
 
 const columns: { id: TaskStatus, title: string }[] = [
@@ -27,52 +36,61 @@ export const App = () => {
 
     const { tasksState } = useContext(AppContext)
 
-    const { taskList, updateListState } = tasksState
+    const { taskList, orderList } = tasksState
 
     const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 10,
-            },
-        })
-    )
+    const pointerSensor = useSensor(PointerSensor, {
+        activationConstraint: {
+            distance: 10,
+        },
+    })
+    const sensors = useSensors(pointerSensor)
 
-    function onDragStart(event: DragStartEvent) {
+
+    const onDragStart = (event: DragStartEvent) => {
         if (event.active.data.current?.type === "Task") {
             setActiveTask(event.active.data.current.task);
             return;
+        } else {
+            console.log(event)
         }
-
     }
-    function onDragEnd(event: DragEndEvent) {
-        console.log(event.over?.id)
+    const onDragEnd = () => {
         setActiveTask(null);
-
     }
-    function onDragOver({ active, over }: DragOverEvent) {
+    const onDragOver = ({ active, over }: DragOverEvent) => {
 
         if (!over) return;
-        const taskActive = active.data.current!.task
 
+        if (over?.data.current && over?.data.current.type === 'Task') {
 
-        const taskOver = over.data.current!.task
-        console.log({ active, over })
+            const activeId = active.id;
+            const overId = over.id;
 
-        const updatedTask = { ...taskActive }
+            if (activeId === overId) return;
 
-        updatedTask.status = taskOver.status
+            orderList(tasks => {
 
-        const newState = taskList.map(task => {
-            if (task.id == updatedTask.id) return updatedTask
+                const activeIndex = tasks.findIndex((task) => task.id === active.id);
+                const overIndex = tasks.findIndex((task) => task.id === over.id);
 
-            return task
-        })
+                tasks[activeIndex].status = tasks[overIndex].status
+                return arrayMove(tasks, activeIndex, overIndex);
+            })
+        }
+        if (over?.data.current && over?.data.current.type === 'Column') {
+            orderList(tasks => {
+                const status: TaskStatus = over?.data.current!.id
 
+                const activeIndex = tasks.findIndex((task) => task.id === active.id);
 
-        updateListState(newState)
+                tasks[activeIndex].status = status
+                return arrayMove(tasks, activeIndex, activeIndex);
+            })
+        }
     }
+
     return (
         <DndContext
             sensors={sensors}
@@ -80,8 +98,8 @@ export const App = () => {
             onDragEnd={onDragEnd}
             onDragOver={onDragOver}
         >
-            <div className="h-[100vh] font-sans p-4 bg-neutral-950 max-md:overflow-x-scroll">
-                <main className="max-w-[980px] h-full m-auto grid grid-cols-[repeat(3,_minmax(300px,_1fr))] gap-4">
+            <div className="h-[100vh] font-sans p-4 bg-neutral-950 max-lg:overflow-x-scroll">
+                <main className="max-w-[1200px] h-full m-auto grid grid-cols-[repeat(3,_minmax(320px,_1fr))] gap-4">
                     {
                         columns.map(column => {
                             return (
@@ -98,12 +116,14 @@ export const App = () => {
             </div>
             {
                 createPortal(
+
                     <DragOverlay>
-                        {activeTask && (
-                            <TaskCard
-                                task={activeTask}
-                            />
-                        )}
+                        {
+                            activeTask && (
+                                <TaskCard
+                                    task={activeTask}
+                                />
+                            )}
                     </DragOverlay>,
                     document.body
                 )

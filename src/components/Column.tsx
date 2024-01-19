@@ -4,9 +4,10 @@ import { IoIosAdd } from "react-icons/io";
 import { Task, TaskStatus } from "../interfaces";
 import { useForm } from "../hooks/useForm";
 import { useOnClickOutside } from "../hooks/useOnClickOutside";
-import { SortableContext } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { TaskCard } from "./TaskCard";
 import { AppContext } from "../context/AppContext";
+import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
     id: TaskStatus;
@@ -19,10 +20,27 @@ export const Column = ({ id, customClass, titleColumn, taskList }: Props) => {
 
     const { tasksState } = useContext(AppContext)
     const { addNewTask } = tasksState
-
     const tasksIds = useMemo(() => {
         return taskList.map((task) => task.id);
     }, [taskList]);
+
+    const {
+        setNodeRef,
+        transition,
+        transform
+    } = useSortable({
+        id,
+        data: {
+            type: "Column",
+            id
+        },
+    })
+
+    const style = {
+        transition,
+        transform: CSS.Transform.toString(transform),
+    };
+
 
     const [activeInput, setActiveInput] = useState(false)
     const modalRef = useRef(null);
@@ -51,7 +69,10 @@ export const Column = ({ id, customClass, titleColumn, taskList }: Props) => {
     }
 
     return (
-        <section className={"bg-zinc-900 text-white rounded-lg relative " + customClass}>
+        <section
+            ref={setNodeRef}
+            style={style}
+            className={"bg-zinc-900 text-white rounded-lg relative " + customClass}>
             <header className="flex justify-between p-3">
                 <span className="text-2xl font-bold">{titleColumn}</span>
                 <button
@@ -87,9 +108,8 @@ export const Column = ({ id, customClass, titleColumn, taskList }: Props) => {
                 }
             </header>
 
-            <div className="column__tasksDrop custom--scroll" >
+            <div className="column__tasksDrop custom--scroll">
                 <SortableContext items={tasksIds}>
-
                     {taskList.map((task) => (
                         <TaskCard
                             key={task.id}
@@ -97,7 +117,6 @@ export const Column = ({ id, customClass, titleColumn, taskList }: Props) => {
                         />
                     ))}
                 </SortableContext>
-
             </div>
         </section>
     )
