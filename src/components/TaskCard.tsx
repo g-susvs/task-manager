@@ -1,13 +1,11 @@
-import { FormEvent, useContext, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
-
-import { Task } from "../interfaces";
-import { useForm } from "../hooks/useForm";
-import { AppContext } from "../context/AppContext";
-import { useOnClickOutside } from "../hooks/useOnClickOutside";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+
+import { Task } from "../interfaces";
+import { useOnClickOutside, useForm, useTask } from "../hooks";
 
 interface Props {
     task: Task;
@@ -36,8 +34,7 @@ export const TaskCard = ({ task }: Props) => {
     };
 
     //* Context
-    const { tasksState } = useContext(AppContext)
-    const { updateTask, changeTaskColor, deleteTask } = tasksState
+    const { updateTask, changeTaskColor, deleteTask } = useTask()
 
     //* UI
     const [editMode, setEditMode] = useState(false)
@@ -83,8 +80,20 @@ export const TaskCard = ({ task }: Props) => {
             <div
                 ref={setNodeRef}
                 style={style}
-                className={`taskCard opacity-40 border-[1px] ${task.color} h-[100px] min-h-[100px]`}
-            />
+                className={`taskCard--dragging opacity-40 border-[1px] ${task.color} `}
+            >
+                <div className="flex justify-between items-start w-full">
+                    <p >{title}</p>
+                </div>
+                <div>
+                    <p className="text-sm">
+                        {task.desc}
+                    </p>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span >{new Date(task.date).toLocaleString()}</span>
+                </div>
+            </div>
         );
     }
 

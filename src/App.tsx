@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
     DndContext,
     DragOverEvent,
@@ -8,13 +8,12 @@ import {
     useSensor,
     useSensors,
 } from '@dnd-kit/core';
+import { arrayMove } from "@dnd-kit/sortable";
 
 import { Task, TaskStatus } from "./interfaces";
-import { AppContext } from "./context/AppContext";
 import { TaskCard } from "./components/TaskCard";
 import { Column } from "./components/Column";
-import { createPortal } from "react-dom";
-import { arrayMove } from "@dnd-kit/sortable";
+import { useTask } from "./hooks";
 
 
 const columns: { id: TaskStatus, title: string }[] = [
@@ -34,9 +33,7 @@ const columns: { id: TaskStatus, title: string }[] = [
 
 export const App = () => {
 
-    const { tasksState } = useContext(AppContext)
-
-    const { orderList } = tasksState
+    const { orderList } = useTask()
 
     const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -84,7 +81,6 @@ export const App = () => {
                 const status: TaskStatus = over?.data.current!.id
 
                 const activeIndex = tasks.findIndex((task) => task.id === active.id);
-
                 tasks[activeIndex].status = status
                 return arrayMove(tasks, activeIndex, activeIndex);
             })
@@ -114,18 +110,14 @@ export const App = () => {
                 </main>
             </div>
             {
-                createPortal(
-
-                    <DragOverlay>
-                        {
-                            activeTask && (
-                                <TaskCard
-                                    task={activeTask}
-                                />
-                            )}
-                    </DragOverlay>,
-                    document.body
-                )
+                <DragOverlay>
+                    {
+                        activeTask && (
+                            <TaskCard
+                                task={activeTask}
+                            />
+                        )}
+                </DragOverlay>
             }
         </DndContext>
 

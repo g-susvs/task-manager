@@ -90,11 +90,6 @@ export const AppProvider = ({ children }: Props) => {
         setTaskList(newArr)
     }
 
-    const updateListState = (list: Task[]) => {
-
-        setTaskList(list)
-    }
-
     const deleteTask = (id: string) => {
 
         const newArr = taskList.filter(task => task.id !== id)
@@ -109,7 +104,6 @@ export const AppProvider = ({ children }: Props) => {
         addNewTask,
         updateTask,
         changeTaskColor,
-        updateListState,
         deleteTask,
         orderList: setTaskList
     }

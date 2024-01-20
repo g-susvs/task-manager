@@ -7,7 +7,6 @@ export interface TasksState {
     addNewTask: (title: string, status: TaskStatus) => void;
     updateTask: (id: string, updatedTask: { title: string, desc: string, status: TaskStatus }) => void;
     changeTaskColor: (id: string, color: string) => void;
-    updateListState: (list: Task[]) => void;
     deleteTask: (id: string) => void;
     orderList: (value: React.SetStateAction<Task[]>) => void;
 }

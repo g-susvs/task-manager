@@ -1,13 +1,11 @@
-import { FormEvent, useContext, useMemo, useRef, useState } from "react";
+import { FormEvent, useMemo, useRef, useState } from "react";
 import { IoIosAdd } from "react-icons/io";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { CSS } from '@dnd-kit/utilities';
 
 import { TaskStatus } from "../interfaces";
-import { useForm } from "../hooks/useForm";
-import { useOnClickOutside } from "../hooks/useOnClickOutside";
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { useOnClickOutside, useForm, useTask } from "../hooks";
 import { TaskCard } from "./TaskCard";
-import { AppContext } from "../context/AppContext";
-import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
     id: TaskStatus;
@@ -17,8 +15,7 @@ interface Props {
 
 export const Column = ({ id, customClass, titleColumn }: Props) => {
 
-    const { tasksState } = useContext(AppContext)
-    const { addNewTask, taskList: taskListState } = tasksState
+    const { addNewTask, taskList: taskListState } = useTask()
 
     const taskList = taskListState.filter(task => task.status === id)
 

@@ -47,7 +47,7 @@ body{
     @apply rounded-lg text-zinc-50 z-10 bg-zinc-950 p-6 flex flex-col gap-2 border-l-8 border-zinc-950 relative hover:border-[1px];
 }
 .taskCard--dragging{
-    @apply h-[100px] rounded-lg bg-zinc-950 p-6 flex flex-col gap-2 border-2 border-dashed border-indigo-800;
+    @apply rounded-lg text-zinc-950 z-10 bg-zinc-950 p-6 flex flex-col gap-2 border-l-8 border-zinc-950 relative hover:border-[1px];
 }
 .taskCard__iconButton{
     @apply w-5 h-5;
