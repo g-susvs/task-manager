@@ -36,7 +36,7 @@ export const App = () => {
 
     const { tasksState } = useContext(AppContext)
 
-    const { taskList, orderList } = tasksState
+    const { orderList } = tasksState
 
     const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -106,7 +106,6 @@ export const App = () => {
                                 <Column
                                     key={column.id}
                                     id={column.id}
-                                    taskList={taskList.filter(task => task.status === column.id)}
                                     titleColumn={column.title}
                                 />
                             )

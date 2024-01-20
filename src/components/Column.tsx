@@ -1,7 +1,7 @@
 import { FormEvent, useContext, useMemo, useRef, useState } from "react";
 import { IoIosAdd } from "react-icons/io";
 
-import { Task, TaskStatus } from "../interfaces";
+import { TaskStatus } from "../interfaces";
 import { useForm } from "../hooks/useForm";
 import { useOnClickOutside } from "../hooks/useOnClickOutside";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
@@ -11,15 +11,17 @@ import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
     id: TaskStatus;
-    taskList: Task[];
     titleColumn: string;
     customClass?: string;
 }
 
-export const Column = ({ id, customClass, titleColumn, taskList }: Props) => {
+export const Column = ({ id, customClass, titleColumn }: Props) => {
 
     const { tasksState } = useContext(AppContext)
-    const { addNewTask } = tasksState
+    const { addNewTask, taskList: taskListState } = tasksState
+
+    const taskList = taskListState.filter(task => task.status === id)
+
     const tasksIds = useMemo(() => {
         return taskList.map((task) => task.id);
     }, [taskList]);
@@ -77,7 +79,7 @@ export const Column = ({ id, customClass, titleColumn, taskList }: Props) => {
                 <span className="text-2xl font-bold">{titleColumn}</span>
                 <button
                     className="btn btn--header"
-                    aria-label="agregar tarea"
+                    aria-label="Mostrar modal"
                     onClick={showInputTask}>
                     <IoIosAdd className="w-6 h-6" />
                 </button>
@@ -99,6 +101,7 @@ export const Column = ({ id, customClass, titleColumn, taskList }: Props) => {
                                 />
                                 <button
                                     type="submit"
+                                    aria-label="Agregar tarea"
                                     className="btn btn--addTask"
                                 >Agregar tarea</button>
                             </form>

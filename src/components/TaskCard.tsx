@@ -111,8 +111,8 @@ export const TaskCard = ({ task }: Props) => {
                             <div ref={modalRef} className="modalDelete">
                                 <span className="modalDelete__quest">Estas seguro?</span>
                                 <div>
-                                    <button type="button" className="btn ml-8 modalDelete__btn--confirm" onClick={() => deleteTask(task.id)} > Sí</button>
-                                    <button type="button" className="btn ml-4 modalDelete__btn--cancel" onClick={() => setActiveDeleteTask(false)}>No</button>
+                                    <button type="button" aria-label="Confirmar" className="btn ml-8 modalDelete__btn--confirm" onClick={() => deleteTask(task.id)} > Sí</button>
+                                    <button type="button" aria-label="Cancelar" className="btn ml-4 modalDelete__btn--cancel" onClick={() => setActiveDeleteTask(false)}>No</button>
                                 </div>
                             </div>
                         }
@@ -144,7 +144,7 @@ export const TaskCard = ({ task }: Props) => {
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-zinc-400">{new Date(task.date).toLocaleString()}</span>
-                        <button className="btn btn--save">Guardar</button>
+                        <button className="btn btn--save" aria-label="Guardar">Guardar</button>
                     </div>
 
                 </form>
@@ -180,8 +180,8 @@ export const TaskCard = ({ task }: Props) => {
                     <div ref={modalRef} className="modalDelete">
                         <span className="modalDelete__quest">Estas seguro?</span>
                         <div>
-                            <button type="button" className="btn ml-8 modalDelete__btn--confirm" onClick={() => deleteTask(task.id)} > Sí</button>
-                            <button type="button" className="btn ml-4 modalDelete__btn--cancel" onClick={() => setActiveDeleteTask(false)}>No</button>
+                            <button type="button" aria-label="Confirmar" className="btn ml-8 modalDelete__btn--confirm" onClick={() => deleteTask(task.id)} > Sí</button>
+                            <button type="button" aria-label="Cancelar" className="btn ml-4 modalDelete__btn--cancel" onClick={() => setActiveDeleteTask(false)}>No</button>
                         </div>
                     </div>
                 }
