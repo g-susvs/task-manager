@@ -16,7 +16,6 @@ describe('test <Column />', () => {
         addNewTask: jest.fn(),
         updateTask: jest.fn(),
         changeTaskColor: jest.fn(),
-        updateListState: jest.fn(),
         deleteTask: jest.fn(),
         orderList: jest.fn(),
     }
